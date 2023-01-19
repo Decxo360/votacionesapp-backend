@@ -2,7 +2,7 @@ from sqlalchemy import Insert, Select, Delete, Join
 from model.seguidor import Seguidor
 from model.Usuario import User
 from schemas.request import seguidorRequest, seguidorRequesEliminar,seguidorObtenerSeguidoresReques
-from schemas.response import seguidorResponse, usuarioResponseSeguidor
+from schemas.response import seguidorResponse, usuarioResponseSeguidor,responseGenerica
 from config.bd import connection
 from typing import List
 from fastapi import APIRouter, status, HTTPException
@@ -26,17 +26,15 @@ def crearSeguidor(seguidor:seguidorRequest.SeguidorRequest)->seguidorResponse.Se
     return responseSeguidor
 
 @router.put("/eliminar")
-def eliminarSeguirdor(seguidor: seguidorRequesEliminar.SeguidorRequestEliminar):
+def eliminarSeguidor(seguidor: seguidorRequesEliminar.SeguidorRequestEliminar)->responseGenerica.ResponseGenerica:
     stmt= Delete(Seguidor).where(Seguidor.id_seguidor==seguidor.id_seguidor)
     result = connection.execute(stmt)
     connection.commit()
-    return{
-        "ok":True,
-        "msg":"seguidor eliminado exitosamente"
-    }
+    response = responseGenerica.ResponseGenerica(True,'seguidor eliminado exitosamente')
+    return response
 
 @router.get("/ObtenerSeguidores")
-def ObntenerSeguidores(user:seguidorObtenerSeguidoresReques.SeguidorObtenerRequest)->List[usuarioResponseSeguidor.UsuarioSeguidorResponse]:
+def obtenerSeguidores(user:seguidorObtenerSeguidoresReques.SeguidorObtenerRequest)->List[usuarioResponseSeguidor.UsuarioSeguidorResponse]:
     usuarioList = []
     stmt = Select(Seguidor).where(Seguidor.id_usuario_seguido == user.idusuario).limit(10)
     result = connection.execute(stmt).all()

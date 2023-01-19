@@ -4,14 +4,14 @@ from model.preguntas import Pregunta
 from model.respuesta import Respuesta
 from model.preguntas_respuestas import PreguntasRespuestas
 from schemas.request import votacionRequest,usuarioVotacionRequest
-from schemas.response import votacionResponse,preguntaResponse,respuestaResponse
+from schemas.response import votacionResponse,preguntaResponse,respuestaResponse,responseGenerica
 from config.bd import connection
 from fastapi import APIRouter, status, HTTPException
 
 router = APIRouter(prefix='/votacion')
 
 @router.post("/crear")
-def crearVotacion(votacion:votacionRequest.VotacionRequest):
+def crearVotacion(votacion:votacionRequest.VotacionRequest)->responseGenerica.ResponseGenerica:
     print(votacion)
     stmtvotacion = Insert(Votacion).values({"id_usuario":votacion.idusuario,"titulo":votacion.titulo})
     resultVotacion = connection.execute(stmtvotacion)
@@ -24,10 +24,8 @@ def crearVotacion(votacion:votacionRequest.VotacionRequest):
             stmtPreguntaRespuesta = Insert(PreguntasRespuestas).values({"id_respuesta":resultRespuesta.lastrowid,"id_pregunta":resultPregunta.lastrowid})
             connection.execute(stmtPreguntaRespuesta)
     connection.commit()
-    return {
-        "ok":True,
-        "msg":"La votacion ha sido creada con exito"
-    }
+    response = responseGenerica.ResponseGenerica(True,'La votacion ha sido creada con exito')
+    return response
 
 @router.get('/ObtenerVotaciones')
 def obtenerVotaciones(user:usuarioVotacionRequest.UsuarioVotacionRequest)->votacionResponse.VotacionResponse:
