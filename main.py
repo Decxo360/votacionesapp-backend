@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from model.Usuario import User
-from sqlalchemy import Select
 from sqlalchemy.orm import Session
 from routes import usuario,seguidor,votacion
-from config.bd import db,engine
+from config.bd import engine
 
 app = FastAPI()
 
