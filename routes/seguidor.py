@@ -38,7 +38,7 @@ def eliminarSeguirdor(seguidor: seguidorRequesEliminar.SeguidorRequestEliminar):
 @router.get("/ObtenerSeguidores")
 def ObntenerSeguidores(user:seguidorObtenerSeguidoresReques.SeguidorObtenerRequest)->List[usuarioResponseSeguidor.UsuarioSeguidorResponse]:
     usuarioList = []
-    stmt = Select(Seguidor).where(Seguidor.id_usuario_seguido == user.idusuario)
+    stmt = Select(Seguidor).where(Seguidor.id_usuario_seguido == user.idusuario).limit(10)
     result = connection.execute(stmt).all()
     print(result)
     for usuario in result:
